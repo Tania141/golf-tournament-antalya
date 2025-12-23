@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Голф Турнир - Правила и Организация</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #003366 0%, #004d99 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.95;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f5f5f5;
+            border-bottom: 2px solid #ddd;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            flex: 1;
+            min-width: 150px;
+            padding: 20px 15px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            background: none;
+            font-size: 16px;
+        }
+
+        .tab:hover {
+            background: #e0e0e0;
+        }
+
+        .tab.active {
+            background: white;
+            color: #003366;
+            border-bottom: 3px solid #003366;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            color: #003366;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #003366;
+        }
+
+        .section h3 {
+            color: #004d99;
+            font-size: 1.5em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .rule-box {
+            background: #f8f9fa;
+            border-left: 5px solid #003366;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .rule-box h4 {
+            color: #003366;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .rule-box ul {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+
+        .rule-box ul li {
+            margin-bottom: 8px;
+        }
+
+        .stableford-table {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px 0;
+            border-collapse: collapse;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .stableford-table th {
+            background: #003366;
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+
+        .stableford-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .stableford-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .points-4 { color: #28a745; font-weight: bold; }
+        .points-3 { color: #17a2b8; font-weight: bold; }
+        .points-2 { color: #007bff; font-weight: bold; }
+        .points-1 { color: #ffc107; font-weight: bold; }
+        .points-0 { color: #dc3545; font-weight: bold; }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .schedule-table th {
+            background: #003366;
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+
+        .schedule-table td {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .schedule-table tr:hover {
+            background: #f0f8ff;
+        }
+
+        .day-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            background: #004d99;
+            color: white;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .group-card {
+            background: white;
+            border: 2px solid #003366;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .group-card h3 {
+            background: #003366;
+            color: white;
+            padding: 15px;
+            margin: -20px -20px 20px -20px;
+            border-radius: 8px 8px 0 0;
+            font-size: 1.5em;
+        }
+
+        .group-members {
+            list-style: none;
+            padding: 0;
+        }
+
+        .group-members li {
+            padding: 12px;
+            margin: 8px 0;
+            background: #f8f9fa;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .group-members li:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .player-name {
+            font-weight: bold;
+            color: #003366;
+        }
+
+        .player-hcp {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .gender-male { border-left: 4px solid #4169E1; }
+        .gender-female { border-left: 4px solid #FF69B4; }
+
+        .edit-btn {
+            background: #ffc107;
+            color: #000;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .edit-btn:hover {
+            background: #ffb300;
+            transform: scale(1.05);
+        }
+
+        .save-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .save-btn:hover {
+            background: #218838;
+            transform: scale(1.05);
+        }
+
+        .cancel-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s;
+            margin-top: 10px;
+            margin-left: 10px;
+        }
+
+        .cancel-btn:hover {
+            background: #5a6268;
+        }
+
+        .admin-controls {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .modal-content h3 {
+            color: #003366;
+            margin-bottom: 20px;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .modal-content input:focus {
+            outline: none;
+            border-color: #003366;
+        }
+
+        .alert {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .edit-mode .player-name {
+            display: inline-block;
+            min-width: 200px;
+            padding: 5px;
+            background: white;
+            border: 2px solid #003366;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .tab {
+                padding: 15px 10px;
+                font-size: 14px;
+            }
+
+            .schedule-table, .stableford-table {
+                font-size: 14px;
+            }
+
+            .schedule-table td, .schedule-table th {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⛳ Голф Турнир Antalya</h1>
+            <p>28 Декември 2025 - 2 Януари 2026</p>
+            <p style="font-size: 1.1em; margin-top: 10px;">🏆 Stableford Format | 4 Игрища | 16 Играчи</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('rules')">📋 Правила</button>
+            <button class="tab" onclick="showTab('schedule')">📅 Разписание</button>
+            <button class="tab" onclick="showTab('groups')">👥 Групи</button>
+            <button class="tab" onclick="showTab('courses')">🏌️ Игрища</button>
+        </div>
+
+        <!-- Правила -->
+        <div id="rules" class="tab-content active">
+            <div class="section">
+                <h2>📋 Правила на Турнира</h2>
+
+                <div class="rule-box">
+                    <h4>🎯 Формат</h4>
+                    <p><strong>Stableford</strong> - индивидуално състезание с точкова система</p>
+                    <ul>
+                        <li>Всеки играч съревновава срещу игрището</li>
+                        <li>Точките се присъждат според представянето спрямо Par</li>
+                        <li>По-високият резултат печели</li>
+                    </ul>
+                </div>
+
+                <h3>🏅 Stableford Точкова Система</h3>
+                <table class="stableford-table">
+                    <thead>
+                        <tr>
+                            <th>Резултат</th>
+                            <th>Точки</th>
+                            <th>Описание</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Eagle или по-добро</td>
+                            <td class="points-4">4 точки</td>
+                            <td>2+ удара под Par</td>
+                        </tr>
+                        <tr>
+                            <td>Birdie</td>
+                            <td class="points-3">3 точки</td>
+                            <td>1 удар под Par</td>
+                        </tr>
+                        <tr>
+                            <td>Par</td>
+                            <td class="points-2">2 точки</td>
+                            <td>Равен на Par</td>
+                        </tr>
+                        <tr>
+                            <td>Bogey</td>
+                            <td class="points-1">1 точка</td>
+                            <td>1 удар над Par</td>
+                        </tr>
+                        <tr>
+                            <td>Double Bogey+</td>
+                            <td class="points-0">0 точки</td>
+                            <td>2+ удара над Par</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="rule-box">
+                    <h4>🎲 Playing Handicap</h4>
+                    <ul>
+                        <li>За всяко игрище се изчислява индивидуален Playing Handicap</li>
+                        <li>Формула: Course Handicap × (Slope Rating ÷ 113)</li>
+                        <li>Playing Handicap се прилага при определяне на Net Score за всяка дупка</li>
+                        <li>Посочен е на индивидуалната карта на всеки играч</li>
+                    </ul>
+                </div>
+
+                <div class="rule-box">
+                    <h4>🏆 Класиране</h4>
+                    <ul>
+                        <li><strong>Две категории:</strong> Мъже и Жени (отделни класирания)</li>
+                        <li><strong>Точки:</strong> Сумата от всички 6 рунда определя победителя</li>
+                        <li><strong>При равенство:</strong> Сравняват се резултатите от последните рундове</li>
+                        <li><strong>Награди:</strong> За първите 3 места във всяка категория</li>
+                    </ul>
+                </div>
+
+                <div class="rule-box">
+                    <h4>📝 Попълване на Картата</h4>
+                    <ul>
+                        <li>Всеки играч носи своята индивидуална карта</li>
+                        <li>Картите се попълват от играча и се проверяват от marker</li>
+                        <li>След рунда картите се предават за обработка</li>
+                        <li>И двамата (играч и marker) подписват картата</li>
+                        <li><strong>Алтернатива:</strong> Може да използвате мобилното приложение за въвеждане на резултати</li>
+                    </ul>
+                </div>
+
+                <div class="rule-box">
+                    <h4>⚠️ Важни Правила</h4>
+                    <ul>
+                        <li>Спазвайте темпото на играта - максимум 4.5 часа за рунд</li>
+                        <li>Уважавайте другите играчи и игрището</li>
+                        <li>При съмнение приложете правилата на R&A</li>
+                        <li>Дрес код: Спортни дрехи, забранени са дънки и тениски без якичка</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Разписание -->
+        <div id="schedule" class="tab-content">
+            <div class="section">
+                <h2>📅 Разписание на Турнира</h2>
+                
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>Ден</th>
+                            <th>Дата</th>
+                            <th>Ден от седмицата</th>
+                            <th>Игрище</th>
+                            <th>Начален час</th>
+                            <th>Интервал</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="day-badge">Ден 1</span></td>
+                            <td><strong>28.12.2025</strong></td>
+                            <td>Събота</td>
+                            <td>National Golf Club</td>
+                            <td>11:18 - 11:45</td>
+                            <td>8-10 мин</td>
+                        </tr>
+                        <tr>
+                            <td><span class="day-badge">Ден 2</span></td>
+                            <td><strong>29.12.2025</strong></td>
+                            <td>Неделя</td>
+                            <td>Carya Golf Club</td>
+                            <td>09:36 - 10:03</td>
+                            <td>8-10 мин</td>
+                        </tr>
+                        <tr>
+                            <td><span class="day-badge">Ден 3</span></td>
+                            <td><strong>30.12.2025</strong></td>
+                            <td>Понеделник</td>
+                            <td>National Golf Club</td>
+                            <td>10:33 - 11:00</td>
+                            <td>8-10 мин</td>
+                        </tr>
+                        <tr>
+                            <td><span class="day-badge">Ден 4</span></td>
+                            <td><strong>31.12.2025</strong></td>
+                            <td>Вторник</td>
+                            <td>Carya Golf Club</td>
+                            <td>10:03 - 10:30</td>
+                            <td>8-10 мин</td>
+                        </tr>
+                        <tr>
+                            <td><span class="day-badge">Ден 5</span></td>
+                            <td><strong>01.01.2026</strong></td>
+                            <td>Сряда</td>
+                            <td>Gloria Old</td>
+                            <td>11:57 - 12:24</td>
+                            <td>8-10 мин</td>
+                        </tr>
+                        <tr>
+                            <td><span class="day-badge">Ден 6</span></td>
+                            <td><strong>02.01.2026</strong></td>
+                            <td>Четвъртък</td>
+                            <td>Sultan</td>
+                            <td>12:30 - 13:00</td>
+                            <td>8-10 мин</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="alert alert-info">
+                    <strong>ℹ️ Забележка:</strong> Посочените часове са за първата група. Останалите групи тръгват последователно с интервал от 8-10 минути.
+                </div>
+            </div>
+        </div>
+
+        <!-- Групи -->
+        <div id="groups" class="tab-content">
+            <div class="section">
+                <h2>👥 Групи</h2>
+                
+                <div class="admin-controls">
+                    <button class="edit-btn" onclick="showPasswordModal()">✏️ Редактирай Групи</button>
+                </div>
+
+                <div class="alert alert-info">
+                    <strong>ℹ️ Организация:</strong> Групите са организирани по handicap за балансирана игра. Всяка група има 4 играчи.
+                </div>
+
+                <div id="groupsContainer"></div>
+
+                <div id="editMessage"></div>
+            </div>
+        </div>
+
+        <!-- Игрища -->
+        <div id="courses" class="tab-content">
+            <div class="section">
+                <h2>🏌️ Информация за Игрищата</h2>
+
+                <div class="rule-box">
+                    <h4>⛳ National Golf Club</h4>
+                    <p><strong>Локация:</strong> Belek, Antalya, Turkey</p>
+                    <p><strong>Par:</strong> 72</p>
+                    <p><strong>Дизайнер:</strong> David Feherty & David Jones</p>
+                    <p><strong>Открито:</strong> 1994</p>
+                    <ul>
+                        <li><strong>Course Rating (Men):</strong> 73.4 | <strong>Slope:</strong> 143</li>
+                        <li><strong>Course Rating (Women):</strong> 71.7 | <strong>Slope:</strong> 132</li>
+                        <li>Красиво игрище с евкалиптови и борови дървета</li>
+                        <li>10 езера и 64 бункера</li>
+                        <li>Гледка към планините Таурус</li>
+                    </ul>
+                </div>
+
+                <div class="rule-box">
+                    <h4>⛳ Carya Golf Club</h4>
+                    <p><strong>Локация:</strong> Belek, Antalya, Turkey</p>
+                    <p><strong>Par:</strong> 72</p>
+                    <p><strong>Дизайнер:</strong> Thomson Perrett & Lobb</p>
+                    <p><strong>Открито:</strong> 2008</p>
+                    <ul>
+                        <li><strong>Course Rating (Men):</strong> 72.3 | <strong>Slope:</strong> 135</li>
+                        <li><strong>Course Rating (Women):</strong> 71.0 | <strong>Slope:</strong> 130</li>
+                        <li>Първото heathland-style игрище в Турция</li>
+                        <li>Осветено за нощна игра</li>
+                        <li>Най-дългата дупка в Турция - 621 yards</li>
+                    </ul>
+                </div>
+
+                <div class="rule-box">
+                    <h4>⛳ Gloria Old Course</h4>
+                    <p><strong>Локация:</strong> Belek, Antalya, Turkey</p>
+                    <p><strong>Par:</strong> 72</p>
+                    <p><strong>Дизайнер:</strong> Michel Gayon</p>
+                    <p><strong>Открито:</strong> 1997</p>
+                    <ul>
+                        <li><strong>Course Rating (Men):</strong> 74.0 | <strong>Slope:</strong> 139</li>
+                        <li><strong>Course Rating (Women):</strong> 71.4 | <strong>Slope:</strong> 139</li>
+                        <li>Домакин на European Seniors Tour (1998, 2000, 2001)</li>
+                        <li>7 езера и 63 бункера</li>
+                        <li>Тесни fairways сред борова гора</li>
+                    </ul>
+                </div>
+
+                <div class="rule-box">
+                    <h4>⛳ Sultan Course (Antalya Golf Club)</h4>
+                    <p><strong>Локация:</strong> Belek, Antalya, Turkey</p>
+                    <p><strong>Par:</strong> 71</p>
+                    <p><strong>Дизайнер:</strong> European Golf Design & David Jones</p>
+                    <p><strong>Открито:</strong> 2003</p>
+                    <ul>
+                        <li><strong>Course Rating:</strong> 73.9 | <strong>Slope:</strong> 142</li>
+                        <li>По-дълго и взискателно игрище</li>
+                        <li>Вода на 11 дупки</li>
+                        <li>Близо 100 бункера</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Modal -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <h3>🔒 Въведи парола за редактиране</h3>
+            <input type="password" id="adminPassword" placeholder="Парола">
+            <button class="save-btn" onclick="checkPassword()">Влез</button>
+            <button class="cancel-btn" onclick="closePasswordModal()">Отказ</button>
+            <div id="passwordError"></div>
+        </div>
+    </div>
+
+    <script>
+        // Парола за админ (може да я смениш тук)
+        const ADMIN_PASSWORD = "golf2025";
+
+        // Данни за играчи
+        let players = {
+            "Petq Ilieva": { hcp: 19.4, gender: "F" },
+            "Elka Georgieva": { hcp: 21.4, gender: "F" },
+            "Pepi Kostova": { hcp: 31.3, gender: "F" },
+            "Albena Deneva": { hcp: 19.7, gender: "F" },
+            "Stoyanka Tsoneva": { hcp: 27.8, gender: "F" },
+            "Fani Martinova": { hcp: 40.3, gender: "F" },
+            "Biser Denev": { hcp: 10.7, gender: "M" },
+            "Ilian Iliev": { hcp: 14.0, gender: "M" },
+            "Todor Kostov": { hcp: 9.2, gender: "M" },
+            "Anton Panayotov": { hcp: 8.8, gender: "M" },
+            "Zlatan Zlatanov": { hcp: 26.8, gender: "M" },
+            "Hristo Bojikov": { hcp: 24.3, gender: "M" },
+            "Krasimir Martinov": { hcp: 25.9, gender: "M" },
+            "Dido Gospodinov": { hcp: 10.8, gender: "M" },
+            "Trifon Siderov": { hcp: 11.2, gender: "M" },
+            "Niki Georgiev": { hcp: 16.2, gender: "M" }
+        };
+
+        // Начални групи
+        let defaultGroups = [
+            ["Anton Panayotov", "Todor Kostov", "Biser Denev", "Dido Gospodinov"],
+            ["Trifon Siderov", "Ilian Iliev", "Niki Georgiev", "Petq Ilieva"],
+            ["Albena Deneva", "Elka Georgieva", "Hristo Bojikov", "Krasimir Martinov"],
+            ["Zlatan Zlatanov", "Stoyanka Tsoneva", "Pepi Kostova", "Fani Martinova"]
+        ];
+
+        let isEditMode = false;
+
+        function init() {
+            loadGroups();
+            displayGroups();
+        }
+
+        function loadGroups() {
+            try {
+                const saved = localStorage.getItem('tournament_groups');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed && parsed.length === 4) {
+                        defaultGroups = parsed;
+                    }
+                }
+            } catch (e) {
+                console.log('Using default groups');
+            }
+        }
+
+        function displayGroups() {
+            const container = document.getElementById('groupsContainer');
+            container.innerHTML = '';
+
+            defaultGroups.forEach((group, groupIndex) => {
+                const card = document.createElement('div');
+                card.className = 'group-card';
+                card.id = `group-${groupIndex}`;
+
+                let membersHtml = '<ul class="group-members">';
+                group.forEach((playerName, playerIndex) => {
+                    const player = players[playerName];
+                    const genderClass = player.gender === 'M' ? 'gender-male' : 'gender-female';
+                    
+                    if (isEditMode) {
+                        membersHtml += `
+                            <li class="${genderClass}">
+                                <span>
+                                    <input type="text" class="player-name" value="${playerName}" 
+                                           data-group="${groupIndex}" data-player="${playerIndex}"
+                                           style="width: 250px; padding: 8px; border: 2px solid #003366; border-radius: 5px;">
+                                </span>
+                                <span class="player-hcp">HCP: ${player.hcp.toFixed(1)}</span>
+                            </li>
+                        `;
+                    } else {
+                        membersHtml += `
+                            <li class="${genderClass}">
+                                <span class="player-name">${playerName}</span>
+                                <span class="player-hcp">HCP: ${player.hcp.toFixed(1)}</span>
+                            </li>
+                        `;
+                    }
+                });
+                membersHtml += '</ul>';
+
+                card.innerHTML = `
+                    <h3>Група ${groupIndex + 1}</h3>
+                    ${membersHtml}
+                `;
+
+                container.appendChild(card);
+            });
+
+            if (isEditMode) {
+                container.innerHTML += `
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button class="save-btn" onclick="saveGroups()">💾 Запази Промените</button>
+                        <button class="cancel-btn" onclick="cancelEdit()">❌ Отказ</button>
+                    </div>
+                `;
+            }
+        }
+
+        function showPasswordModal() {
+            document.getElementById('passwordModal').style.display = 'block';
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('passwordError').innerHTML = '';
+        }
+
+        function closePasswordModal() {
+            document.getElementById('passwordModal').style.display = 'none';
+        }
+
+        function checkPassword() {
+            const password = document.getElementById('adminPassword').value;
+            
+            if (password === ADMIN_PASSWORD) {
+                closePasswordModal();
+                isEditMode = true;
+                displayGroups();
+            } else {
+                document.getElementById('passwordError').innerHTML = `
+                    <div class="alert alert-error" style="margin-top: 15px;">
+                        ❌ Грешна парола!
+                    </div>
+                `;
+            }
+        }
+
+        function saveGroups() {
+            const newGroups = [[], [], [], []];
+            
+            // Събиране на новите имена
+            const inputs = document.querySelectorAll('.player-name');
+            inputs.forEach(input => {
+                const groupIndex = parseInt(input.dataset.group);
+                const playerIndex = parseInt(input.dataset.player);
+                const playerName = input.value.trim();
+                
+                if (playerName) {
+                    newGroups[groupIndex][playerIndex] = playerName;
+                }
+            });
+
+            // Валидация
+            for (let i = 0; i < 4; i++) {
+                if (newGroups[i].length !== 4) {
+                    alert(`Група ${i + 1} трябва да има точно 4 играчи!`);
+                    return;
+                }
+            }
+
+            // Проверка за дублирани имена
+            const allNames = newGroups.flat();
+            const uniqueNames = new Set(allNames);
+            if (uniqueNames.size !== allNames.length) {
+                alert('Има дублирани имена на играчи! Всеки играч може да бъде само в една група.');
+                return;
+            }
+
+            // Запазване
+            try {
+                localStorage.setItem('tournament_groups', JSON.stringify(newGroups));
+                defaultGroups = newGroups;
+                isEditMode = false;
+                displayGroups();
+
+                document.getElementById('editMessage').innerHTML = `
+                    <div class="alert alert-success">
+                        ✅ Групите са запазени успешно!
+                    </div>
+                `;
+
+                setTimeout(() => {
+                    document.getElementById('editMessage').innerHTML = '';
+                }, 3000);
+            } catch (error) {
+                alert('Грешка при запазване: ' + error.message);
+            }
+        }
+
+        function cancelEdit() {
+            isEditMode = false;
+            displayGroups();
+        }
+
+        function showTab(tabName) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        window.addEventListener('load', init);
+
+        // Затваряне на modal при клик извън него
+        window.onclick = function(event) {
+            const modal = document.getElementById('passwordModal');
+            if (event.target == modal) {
+                closePasswordModal();
+            }
+        }
+    </script>
+</body>
+</html>

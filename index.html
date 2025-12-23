@@ -466,6 +466,7 @@
                 name: "National Golf Club",
                 date: "28.12.2025",
                 par: 72,
+                pars: [5,3,4,5,3,4,4,4,4,4,3,5,4,5,5,3,4,4],
                 M: { rating: 73.4, slope: 143 },
                 F: { rating: 71.7, slope: 132 }
             },
@@ -474,6 +475,7 @@
                 name: "Carya Golf Club",
                 date: "29.12.2025",
                 par: 72,
+                pars: [4,3,4,4,4,3,5,3,4,5,4,5,4,3,5,4,4,4],
                 M: { rating: 72.3, slope: 135 },
                 F: { rating: 71.0, slope: 130 }
             },
@@ -482,6 +484,7 @@
                 name: "National Golf Club",
                 date: "30.12.2025",
                 par: 72,
+                pars: [5,3,4,5,3,4,4,4,4,4,3,5,4,5,5,3,4,4],
                 M: { rating: 73.4, slope: 143 },
                 F: { rating: 71.7, slope: 132 }
             },
@@ -490,6 +493,7 @@
                 name: "Carya Golf Club",
                 date: "31.12.2025",
                 par: 72,
+                pars: [4,3,4,4,4,3,5,3,4,5,4,5,4,3,5,4,4,4],
                 M: { rating: 72.3, slope: 135 },
                 F: { rating: 71.0, slope: 130 }
             },
@@ -498,6 +502,7 @@
                 name: "Gloria Old",
                 date: "01.01.2026",
                 par: 72,
+                pars: [5,3,4,4,5,4,3,4,5,3,4,5,4,3,4,4,5,3],
                 M: { rating: 74.0, slope: 139 },
                 F: { rating: 71.4, slope: 139 }
             },
@@ -506,6 +511,7 @@
                 name: "Sultan",
                 date: "02.01.2026",
                 par: 71,
+                pars: [4,3,5,4,4,3,5,3,4,4,4,5,4,4,4,5,3,4],
                 M: { rating: 73.9, slope: 142 },
                 F: { rating: 73.9, slope: 142 }
             }
@@ -615,8 +621,7 @@
 
         function createHoleRow(holeNum, coursePar) {
             const row = document.createElement('tr');
-            const par = holeNum <= 9 ? Math.round(coursePar / 2 / 9) * 9 / 9 : Math.round(coursePar / 2 / 9) * 9 / 9;
-            const holePar = holeNum % 3 === 0 ? 5 : (holeNum % 3 === 1 ? 4 : 3);
+            const holePar = currentCourse.pars[holeNum - 1]; // Използваме реалния Par за дупката
             
             row.innerHTML = `
                 <td><strong>${holeNum}</strong></td>
@@ -676,7 +681,7 @@
             document.getElementById('totalPoints').textContent = outPoints + inPoints;
         }
 
-        async function saveScore() {
+        function saveScore() {
             const playerName = document.getElementById('playerSelect').value;
             const courseIndex = document.getElementById('courseSelect').value;
             const totalPoints = parseInt(document.getElementById('totalPoints').textContent);
@@ -717,7 +722,7 @@
 
             try {
                 const key = `score:${playerName}:${course.id}`;
-                await window.storage.set(key, JSON.stringify(scoreData));
+                localStorage.setItem(key, JSON.stringify(scoreData));
 
                 document.getElementById('saveMessage').innerHTML = `
                     <div class="alert alert-success">
@@ -738,30 +743,34 @@
             }
         }
 
-        async function loadLeaderboard() {
+        function loadLeaderboard() {
             try {
-                const keys = await window.storage.list('score:');
                 const scores = {};
 
-                for (const key of keys.keys) {
-                    try {
-                        const result = await window.storage.get(key);
-                        if (result && result.value) {
-                            const scoreData = JSON.parse(result.value);
-                            
-                            if (!scores[scoreData.player]) {
-                                scores[scoreData.player] = {
-                                    player: scoreData.player,
-                                    gender: players[scoreData.player].gender,
-                                    hcp: players[scoreData.player].hcp,
-                                    rounds: {}
-                                };
+                // Обхождане на всички ключове в localStorage
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    
+                    if (key && key.startsWith('score:')) {
+                        try {
+                            const value = localStorage.getItem(key);
+                            if (value) {
+                                const scoreData = JSON.parse(value);
+                                
+                                if (!scores[scoreData.player]) {
+                                    scores[scoreData.player] = {
+                                        player: scoreData.player,
+                                        gender: players[scoreData.player].gender,
+                                        hcp: players[scoreData.player].hcp,
+                                        rounds: {}
+                                    };
+                                }
+                                
+                                scores[scoreData.player].rounds[scoreData.courseId] = scoreData.totalPoints;
                             }
-                            
-                            scores[scoreData.player].rounds[scoreData.courseId] = scoreData.totalPoints;
+                        } catch (e) {
+                            console.error('Error loading score:', e);
                         }
-                    } catch (e) {
-                        console.error('Error loading score:', e);
                     }
                 }
 
@@ -818,7 +827,7 @@
             });
         }
 
-        async function showMyResults() {
+        function showMyResults() {
             const playerName = document.getElementById('myPlayerSelect').value;
             const content = document.getElementById('myResultsContent');
 
@@ -828,21 +837,25 @@
             }
 
             try {
-                const keys = await window.storage.list(`score:${playerName}:`);
                 const myScores = [];
 
-                for (const key of keys.keys) {
-                    try {
-                        const result = await window.storage.get(key);
-                        if (result && result.value) {
-                            myScores.push(JSON.parse(result.value));
+                // Обхождане на всички ключове в localStorage
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    
+                    if (key && key.startsWith(`score:${playerName}:`)) {
+                        try {
+                            const value = localStorage.getItem(key);
+                            if (value) {
+                                myScores.push(JSON.parse(value));
+                            }
+                        } catch (e) {
+                            console.error('Error loading score:', e);
                         }
-                    } catch (e) {
-                        console.error('Error loading score:', e);
                     }
                 }
 
-                myScores.sort((a, b) => new Date(a.date) - new Date(b.date));
+                myScores.sort((a, b) => new Date(a.date.split('.').reverse().join('-')) - new Date(b.date.split('.').reverse().join('-')));
 
                 let html = `<h3 style="color: #003366; margin-top: 20px;">Резултати на ${playerName}</h3>`;
                 
