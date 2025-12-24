@@ -50,12 +50,12 @@
             background: #f5f5f5;
             border-bottom: 2px solid #ddd;
             overflow-x: auto;
-            flex-wrap: wrap;
+            -webkit-overflow-scrolling: touch;
         }
 
         .tab {
-            flex: 1;
-            min-width: 140px;
+            flex: 0 0 auto;
+            min-width: 120px;
             padding: 18px 12px;
             text-align: center;
             cursor: pointer;
@@ -469,27 +469,53 @@
         }
 
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
             .header h1 {
-                font-size: 2em;
+                font-size: 1.8em;
+            }
+
+            .header p {
+                font-size: 1em;
             }
 
             .tab {
                 padding: 15px 10px;
-                font-size: 13px;
-                min-width: 100px;
+                font-size: 14px;
+                min-width: 110px;
+            }
+
+            .tab-content {
+                padding: 20px 15px;
             }
 
             .points-input-large {
                 font-size: 36px;
+                padding: 15px;
             }
 
             .schedule-table, .leaderboard-table {
-                font-size: 14px;
+                font-size: 12px;
             }
 
             .schedule-table td, .schedule-table th,
             .leaderboard-table td, .leaderboard-table th {
-                padding: 10px 8px;
+                padding: 8px 5px;
+            }
+
+            .course-card {
+                padding: 15px;
+            }
+
+            .group-card {
+                padding: 15px;
+            }
+
+            .form-group select,
+            .form-group input {
+                font-size: 16px; /* Prevents zoom on iOS */
             }
         }
     </style>
@@ -980,14 +1006,21 @@
         function saveScore() {
             const playerName = document.getElementById('playerSelect').value;
             const courseIndex = document.getElementById('courseSelect').value;
-            const totalPoints = parseInt(document.getElementById('totalPointsInput').value);
+            const totalPointsInput = document.getElementById('totalPointsInput').value;
 
             if (!playerName || courseIndex === '') {
                 alert('Моля, изберете играч и игрище!');
                 return;
             }
 
-            if (!totalPoints || totalPoints < 0 || totalPoints > 72) {
+            if (totalPointsInput === '' || totalPointsInput === null) {
+                alert('Моля, въведете брой точки!');
+                return;
+            }
+
+            const totalPoints = parseInt(totalPointsInput);
+
+            if (isNaN(totalPoints) || totalPoints < 0 || totalPoints > 72) {
                 alert('Моля, въведете валиден брой точки (0-72)!');
                 return;
             }
