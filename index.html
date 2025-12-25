@@ -649,7 +649,7 @@
             </div>
 
             <div class="alert alert-info">
-                <strong>ℹ️ Организация:</strong> Групите са организирани по жребий за всяка игра. Всяка група има 4 играчи.
+                <strong>ℹ️ Организация:</strong> Групите са организирани по жребий за всяка игра. Всяка група има точно 4 играчи (16 играчи общо).
             </div>
 
             <div id="groupsContainer"></div>
@@ -915,6 +915,26 @@
             "Vanq Manevski": { hcp: 20.6, gender: "F" }
         };
 
+        // Играчи участващи в турнира (без Rumen и Vanq)
+        const tournamentPlayers = [
+            "Anton Panayotov",
+            "Todor Kostov", 
+            "Biser Denev",
+            "Dido Gospodinov",
+            "Trifon Siderov",
+            "Ilian Iliev",
+            "Niki Georgiev",
+            "Hristo Bojikov",
+            "Krasimir Martinov",
+            "Zlatan Zlatanov",
+            "Petq Ilieva",
+            "Elka Georgieva",
+            "Pepi Kostova",
+            "Albena Deneva",
+            "Stoyanka Tsoneva",
+            "Fani Martinova"
+        ];
+
         // Данни за игрища
         const courses = [
             {
@@ -967,12 +987,12 @@
             }
         ];
 
-        // Начални групи (ще се зареждат от localStorage)
+        // Начални групи (ще се зареждат от Firebase) - 4 групи по 4 играчи
         let defaultGroups = [
             ["Anton Panayotov", "Todor Kostov", "Biser Denev", "Dido Gospodinov"],
-            ["Trifon Siderov", "Ilian Iliev", "Niki Georgiev", "Petq Ilieva", "Rumen Manevski"],
-            ["Albena Deneva", "Vanq Manevski", "Elka Georgieva", "Hristo Bojikov"],
-            ["Krasimir Martinov", "Zlatan Zlatanov", "Stoyanka Tsoneva", "Pepi Kostova", "Fani Martinova"]
+            ["Trifon Siderov", "Ilian Iliev", "Niki Georgiev", "Petq Ilieva"],
+            ["Albena Deneva", "Elka Georgieva", "Hristo Bojikov", "Krasimir Martinov"],
+            ["Zlatan Zlatanov", "Stoyanka Tsoneva", "Pepi Kostova", "Fani Martinova"]
         ];
 
         let currentPlayer = null;
@@ -1124,7 +1144,6 @@
 
         function loadLeaderboard() {
             if (!isFirebaseReady) {
-                console.log('Firebase not ready yet');
                 return;
             }
 
@@ -1163,7 +1182,6 @@
         // Real-time listener for automatic updates
         function setupRealtimeListener() {
             if (!isFirebaseReady) {
-                console.log('Firebase not ready for realtime listener');
                 return;
             }
 
@@ -1258,7 +1276,6 @@
         // ГРУПИ
         function loadGroups() {
             if (!isFirebaseReady) {
-                console.log('Using default groups - Firebase not ready');
                 displayGroups();
                 return;
             }
@@ -1274,11 +1291,9 @@
                         displayGroups();
                     })
                     .catch((error) => {
-                        console.log('Using default groups');
                         displayGroups();
                     });
             } catch (e) {
-                console.log('Using default groups');
                 displayGroups();
             }
         }
@@ -1297,12 +1312,23 @@
                     const genderClass = player.gender === 'M' ? 'gender-male' : 'gender-female';
                     
                     if (isEditMode) {
+                        // Create dropdown with all tournament players
+                        let dropdownOptions = '<option value="">-- Избери играч --</option>';
+                        tournamentPlayers.forEach(name => {
+                            const selected = name === playerName ? 'selected' : '';
+                            dropdownOptions += `<option value="${name}" ${selected}>${name}</option>`;
+                        });
+                        
                         membersHtml += `
-                            <li class="${genderClass}">
-                                <input type="text" class="player-name" value="${playerName}" 
-                                       data-group="${groupIndex}" data-player="${playerIndex}"
-                                       style="width: 250px; padding: 8px; border: 2px solid #003366; border-radius: 5px;">
-                                <span class="player-hcp">HCP: ${player.hcp.toFixed(1)}</span>
+                            <li class="${genderClass}" id="player-${groupIndex}-${playerIndex}">
+                                <select class="player-dropdown" 
+                                        data-group="${groupIndex}" 
+                                        data-player="${playerIndex}"
+                                        onchange="updatePlayerHcp(${groupIndex}, ${playerIndex})"
+                                        style="width: 250px; padding: 8px; border: 2px solid #003366; border-radius: 5px; font-size: 14px;">
+                                    ${dropdownOptions}
+                                </select>
+                                <span class="player-hcp" id="hcp-${groupIndex}-${playerIndex}">HCP: ${player.hcp.toFixed(1)}</span>
                             </li>
                         `;
                     } else {
@@ -1334,6 +1360,24 @@
             }
         }
 
+        function updatePlayerHcp(groupIndex, playerIndex) {
+            const dropdown = document.querySelector(`select[data-group="${groupIndex}"][data-player="${playerIndex}"]`);
+            const playerName = dropdown.value;
+            const hcpSpan = document.getElementById(`hcp-${groupIndex}-${playerIndex}`);
+            const listItem = document.getElementById(`player-${groupIndex}-${playerIndex}`);
+            
+            if (playerName && players[playerName]) {
+                const player = players[playerName];
+                hcpSpan.textContent = `HCP: ${player.hcp.toFixed(1)}`;
+                
+                // Update gender class
+                listItem.classList.remove('gender-male', 'gender-female');
+                listItem.classList.add(player.gender === 'M' ? 'gender-male' : 'gender-female');
+            } else {
+                hcpSpan.textContent = 'HCP: -';
+            }
+        }
+
         function showPasswordModal() {
             document.getElementById('passwordModal').style.display = 'block';
             document.getElementById('adminPassword').value = '';
@@ -1361,28 +1405,38 @@
         }
 
         function saveGroups() {
-            const newGroups = [];
+            const newGroups = [[], [], [], []];
             
-            // Събиране на новите групи
-            defaultGroups.forEach((_, groupIndex) => {
-                newGroups[groupIndex] = [];
-            });
-
-            const inputs = document.querySelectorAll('.player-name');
-            inputs.forEach(input => {
-                const groupIndex = parseInt(input.dataset.group);
-                const playerName = input.value.trim();
+            // Събиране на новите имена от dropdown менютата
+            const dropdowns = document.querySelectorAll('.player-dropdown');
+            dropdowns.forEach(dropdown => {
+                const groupIndex = parseInt(dropdown.dataset.group);
+                const playerName = dropdown.value.trim();
                 
                 if (playerName && players[playerName]) {
                     newGroups[groupIndex].push(playerName);
                 }
             });
 
-            // Валидация - проверка за дублирани имена
+            // Валидация - всяка група трябва да има точно 4 играчи
+            for (let i = 0; i < 4; i++) {
+                if (newGroups[i].length !== 4) {
+                    alert(`Група ${i + 1} трябва да има точно 4 играчи! Моля попълнете всички позиции.`);
+                    return;
+                }
+            }
+
+            // Проверка за дублирани имена
             const allNames = newGroups.flat();
             const uniqueNames = new Set(allNames);
             if (uniqueNames.size !== allNames.length) {
                 alert('Има дублирани имена на играчи! Всеки играч може да бъде само в една група.');
+                return;
+            }
+
+            // Проверка дали всички 16 играчи са включени
+            if (allNames.length !== 16) {
+                alert('Всички 16 играчи трябва да бъдат разпределени в групите!');
                 return;
             }
 
